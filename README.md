@@ -1,2 +1,2 @@
-# cmdhacker---ciberseguridad
-actualizazion (2024-2025)
+# actualizazion (2024-2025)
+
