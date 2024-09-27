@@ -3,12 +3,43 @@ import subprocess
 import platform
 from datetime import datetime
 import importlib
+from tkinter import filedialog, Tk
 
-# Carga de módulos -> Load modules
-cmd_stdlib = importlib.import_module('cmd', package=None)
-# Directorio de Scripts -> Scripts directory
-custom_commands_dir = "C:/Users/tyler/programacion/Nuevacarpeta/cmdhacker/pyscript" if os.name == 'nt' else "/home/tyler/programacion/Nuevacarpeta/cmdhacker/pyscript"  # Directorio de comandos personalizados
-log_file = "logs/command_logs.txt"  # Archivo de registro de comandos
+def buscar_cmdhacker():
+    """Busca la carpeta cmdhacker en los directorios del sistema o pide al usuario seleccionarla."""
+    home_dir = os.environ.get('USERPROFILE') if os.name == 'nt' else os.environ.get('HOME')
+    posibles_rutas = [
+        os.path.join(home_dir, "programacion", "Nuevacarpeta", "cmdhacker"),
+        os.path.join(home_dir, "Documents", "cmdhacker"),
+        os.path.join(home_dir, "cmdhacker"),
+        os.path.join(os.getcwd(), "cmdhacker")  # Busca en el directorio actual del script
+    ]
+    
+    # Busca en posibles ubicaciones
+    for ruta in posibles_rutas:
+        if os.path.exists(ruta):
+            return ruta
+    
+    # Si no se encuentra, pide al usuario seleccionar manualmente
+    print("No se encontró la carpeta 'cmdhacker'. Selecciona su ubicación manualmente.")
+    return seleccionar_carpeta()
+
+def seleccionar_carpeta():
+    """Abre un cuadro de diálogo para que el usuario seleccione la carpeta cmdhacker."""
+    root = Tk()
+    root.withdraw()  # Oculta la ventana principal
+    ruta_carpeta = filedialog.askdirectory(title="Selecciona la carpeta cmdhacker")
+    if ruta_carpeta:
+        return ruta_carpeta
+    else:
+        raise FileNotFoundError("No se seleccionó ninguna carpeta 'cmdhacker'.")
+
+# Obtener la ruta principal de cmdhacker
+cmdhacker_dir = buscar_cmdhacker()
+
+# Directorio de scripts dentro de cmdhacker
+custom_commands_dir = os.path.join(cmdhacker_dir, "pyscript")
+log_file = os.path.join(cmdhacker_dir, "logs", "command_logs.txt")
 max_log_size = 5 * 1024  # Tamaño máximo del archivo de log en bytes (5 KB)
 
 # Extensiones soportadas
@@ -35,7 +66,6 @@ def buscar_comando(comando):
 def rotar_logs():
     """Realiza la rotación de logs si el archivo actual excede el tamaño máximo."""
     if os.path.exists(log_file) and os.path.getsize(log_file) >= max_log_size:
-        # Mover el archivo actual a un archivo con un timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         nuevo_nombre = f"{log_file}_{timestamp}"
         os.rename(log_file, nuevo_nombre)
