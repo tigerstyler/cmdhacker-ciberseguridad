@@ -1,6 +1,6 @@
 # actualizazion (2024-2025)
 
-### Comandos de Sistema (Windows y Linux/Mac):
+### Comandos implementados
 1. **ASSOC (Windows)**:
    - **Descripción**: Manipula las asociaciones de archivos, es decir, asocia extensiones de archivo con programas predeterminados.
    - **Ejemplo de uso**: `assoc .txt=txtfile` asocia los archivos `.txt` con el editor de texto predeterminado.
